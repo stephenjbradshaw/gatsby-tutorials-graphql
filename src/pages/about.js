@@ -14,6 +14,8 @@ export default function About({ data }) {
   )
 }
 
+// This is a page query. Can only be used in pages
+// By convention lives at bottom of file
 export const query = graphql`
   query {
     site {
