@@ -4,6 +4,7 @@ import { useStaticQuery, Link, graphql } from "gatsby"
 
 import { rhythm } from "../utils/typography"
 export default function Layout({ children }) {
+ 
   // This is a static query, can be used in components
   const data = useStaticQuery(
     graphql`

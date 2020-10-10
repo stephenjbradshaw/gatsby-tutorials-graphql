@@ -1,4 +1,5 @@
 const { createFilePath } = require(`gatsby-source-filesystem`)
+const path = require(`path`)
 
 // Data in gatsby is organized as nodes in a graph
 
@@ -20,7 +21,6 @@ const { createFilePath } = require(`gatsby-source-filesystem`)
  This value can then be read with graphql!! (see next step)
  */
 
-
 exports.onCreateNode = ({ node, getNode, actions }) => {
   const { createNodeField } = actions
   if (node.internal.type === "MarkdownRemark") {
@@ -31,4 +31,35 @@ exports.onCreateNode = ({ node, getNode, actions }) => {
       value: slug,
     })
   }
+}
+
+/*
+  Generates pages based on the result of querying the slugs for MD files we just created
+  For each node, make a page passing in the slug data
+*/
+exports.createPages = async ({ graphql, actions }) => {
+  const { createPage } = actions
+  const result = await graphql(`
+    query {
+      allMarkdownRemark {
+        edges {
+          node {
+            fields {
+              slug
+            }
+          }
+        }
+      }
+    }
+  `)
+  result.data.allMarkdownRemark.edges.forEach(({ node }) => {
+    createPage({
+      path: node.fields.slug,
+      component: path.resolve(`./src/templates/blog-post.js`),
+      context: {
+        // Data in here will be available in page queries a GraphQL variables
+        slug: node.fields.slug,
+      },
+    })
+  })
 }
